@@ -92,7 +92,7 @@ export const verifyDataPresence = async (playerId: string): Promise<boolean> => 
 //Add data to database
 export const addDataToDatabase = async (player: Player): Promise<void> => {
   await dbClient.query(
-    'INSERT INTO players (playerId, name, country, money) VALUES ($1, $2, $3, $4)',
+    'INSERT INTO players (player_id, name, country, money) VALUES ($1, $2, $3, $4)',
     [player.playerId, player.name, player.country, player.money]
   );
 }
