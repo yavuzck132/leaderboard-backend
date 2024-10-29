@@ -2,11 +2,12 @@
 import Redis from 'ioredis';
 import { PlayerRedisResponse } from '../models/types';
 
-const redis = new Redis({
-    host: process.env.REDIS_HOST,  // Redis server host
-    port: parseInt(process.env.REDIS_PORT || "6380", 10),          // Redis server port
-});
-
+const redis = process.env.REDIS_URL
+    ? new Redis(process.env.REDIS_URL)
+    : new Redis({
+        host: process.env.REDIS_HOST || 'localhost', // Default to localhost
+        port: parseInt(process.env.REDIS_PORT || '6380', 10), // Default port
+    });
 
 redis.on('connect', () => {
     console.log(`Connected to Redis`);
