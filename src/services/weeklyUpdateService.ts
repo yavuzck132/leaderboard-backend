@@ -47,7 +47,7 @@ async function distributeRewardsAndResetRedis() {
   // Step 5: Reset Redis
   await resetPlayerScores(); // Clear weekly scores in Redis
   // Prefill Redis with initial data for development environment
-  if (process.env.NODE_ENV === 'development'){
+  if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production'){
     await prefillData();    
   }
  }catch(error){

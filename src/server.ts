@@ -14,19 +14,27 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+let server;
 //Define SSL options for HTTPS server
-const options = {
-  key: fs.readFileSync(path.join(__dirname, process.env.SSL_PRIVATE_KEY || '')),
-  cert: fs.readFileSync(path.join(__dirname, process.env.SSL_CERTIFICATE || '')),
-};
+if (process.env.NODE_ENV === 'production') {
+  // Render manages HTTPS in production, so just start the app directly
+  server = app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+} else {
+  // Local HTTPS server for development, if needed
+  const options = {
+    key: fs.readFileSync(path.join(__dirname, process.env.SSL_PRIVATE_KEY || '')),
+    cert: fs.readFileSync(path.join(__dirname, process.env.SSL_CERTIFICATE || '')),
+  };
 
-// Create and start an HTTPS server using the provided SSL options and express app
-const server = https.createServer(options, app).listen(PORT, () => {
-  console.log(`HTTPS Server running on https://localhost:${PORT}`);
-});
+  server = https.createServer(options, app).listen(PORT, () => {
+    console.log(`HTTPS Server running on https://localhost:${PORT}`);
+  });
+}
 
 // Prefill data in development mode
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production') {
   prefillData()
     .then(() => console.log('Prefill complete'))
     .catch((error) => console.error('Error in prefill:', error));
@@ -39,7 +47,6 @@ app.get('/', (req, res) => {
 
 // Middleware
 app.use(express.json());
-app.use(cors());
 
 app.use(cors({
   origin: process.env.CLIENT_ORIGIN || 'http://localhost:3001',
