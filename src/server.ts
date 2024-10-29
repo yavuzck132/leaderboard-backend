@@ -8,14 +8,16 @@ import https from 'https';
 import fs from 'fs';
 import path from 'path';
 import cors from 'cors';
+import dotenv from 'dotenv';
 
+dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 //Define SSL options for HTTPS server
 const options = {
-  key: fs.readFileSync(path.join(__dirname, '..', 'ssl', 'private.key')),
-  cert: fs.readFileSync(path.join(__dirname, '..', 'ssl', 'certificate.crt')),
+  key: fs.readFileSync(path.join(__dirname, process.env.SSL_PRIVATE_KEY || '')),
+  cert: fs.readFileSync(path.join(__dirname, process.env.SSL_CERTIFICATE || '')),
 };
 
 // Create and start an HTTPS server using the provided SSL options and express app
